@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
@@ -35,3 +38,15 @@ jobs:
         with:
           name: investconnect-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: InvestConnect v${{ github.run_number }}
+          body: |
+            🚀 InvestConnect APK Release
+            Commit: ${{ github.sha }}
+            Branch: main
+            Build: ${{ github.run_number }}
+          files: build/app/outputs/flutter-apk/app-release.apk
