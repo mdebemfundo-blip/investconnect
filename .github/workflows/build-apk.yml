@@ -8,30 +8,11 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
         with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Install Flutter (Dart 3.5+)
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.7'
-          channel: 'stable'
-          architecture: 'x64'
-          cache: true
-
-      - name: Disable Flutter analytics
-        run: flutter config --no-analytics
-
-      - name: Flutter doctor
-        run: flutter doctor -v
+          channel: stable
 
       - name: Get dependencies
         run: flutter pub get
