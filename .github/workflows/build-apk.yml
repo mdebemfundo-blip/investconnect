@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -19,27 +19,27 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Set up Flutter (Dart 3.5+)
+      - name: Install Flutter (Dart 3.5+)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.3'
+          flutter-version: '3.38.7'
           channel: 'stable'
           architecture: 'x64'
           cache: true
 
-      - name: Disable analytics
+      - name: Disable Flutter analytics
         run: flutter config --no-analytics
 
       - name: Flutter doctor
         run: flutter doctor -v
 
-      - name: Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
       - name: Build release APK
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: investconnect-release-apk
