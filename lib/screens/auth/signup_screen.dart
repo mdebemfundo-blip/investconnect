@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/input_field.dart';
 import '../../widgets/primary_button.dart';
 import '../profile/create_profile_screen.dart';
-import '../home/main_shell.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -12,7 +11,15 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  String selectedRole = 'entrepreneur'; // default role
+  String selectedRole = 'startup';
+
+  final List<Map<String, String>> roles = const [
+    {'key': 'startup', 'label': 'Startup / Founder'},
+    {'key': 'investor', 'label': 'Investor'},
+    {'key': 'mentor', 'label': 'Mentor'},
+    {'key': 'cofounder', 'label': 'Co-founder'},
+    {'key': 'broker', 'label': 'Broker'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +46,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Input Fields
+                // ================= INPUTS =================
                 const InputField(hint: "Full Name", icon: Icons.person_outline),
                 const SizedBox(height: 16),
                 const InputField(hint: "Email", icon: Icons.email_outlined),
@@ -51,22 +58,23 @@ class _SignupScreenState extends State<SignupScreen> {
                     hint: "Confirm Password",
                     icon: Icons.lock_outline,
                     obscure: true),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-                // Role Selection
+                // ================= ROLE SELECTION =================
                 DropdownButtonFormField<String>(
                   value: selectedRole,
                   decoration: const InputDecoration(
-                    labelText: "Select Role",
+                    labelText: "Select Your Role",
                     border: OutlineInputBorder(),
                   ),
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'entrepreneur', child: Text("Entrepreneur")),
-                    DropdownMenuItem(
-                        value: 'investor', child: Text("Investor")),
-                    DropdownMenuItem(value: 'mentor', child: Text("Mentor")),
-                  ],
+                  items: roles
+                      .map(
+                        (role) => DropdownMenuItem(
+                          value: role['key'],
+                          child: Text(role['label']!),
+                        ),
+                      )
+                      .toList(),
                   onChanged: (val) {
                     if (val != null) {
                       setState(() => selectedRole = val);
@@ -74,18 +82,18 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
+
+                // ================= CTA =================
                 PrimaryButton(
-                  text: "Sign Up",
+                  text: "Continue",
                   onTap: () {
-                    // Navigate to Profile Creation, passing role
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (_) => ProfileCreationScreen(
                           userRole: selectedRole,
-                          navigateToHome:
-                              true, // automatically go to MainShell after finish
+                          navigateToHome: true,
                         ),
                       ),
                     );

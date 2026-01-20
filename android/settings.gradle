@@ -3,7 +3,7 @@ pluginManagement {
         def properties = new Properties()
         file("local.properties").withInputStream { properties.load(it) }
         def flutterSdkPath = properties.getProperty("flutter.sdk")
-        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        assert flutterSdkPath != null : "flutter.sdk not set in local.properties"
         return flutterSdkPath
     }()
 
@@ -17,11 +17,12 @@ pluginManagement {
 }
 
 plugins {
-    id "com.android.application" version "8.1.1" apply false
-    id "com.android.library" version "8.1.1" apply false
+    // ✅ UPGRADED AGP (FIXES YOUR ERROR)
+    id "com.android.application" version "8.1.4" apply false
+    id "com.android.library" version "8.1.4" apply false
+
+    // ✅ STABLE & COMPATIBLE WITH FLUTTER
     id "org.jetbrains.kotlin.android" version "1.9.22" apply false
 }
 
-
-
-include ":app"
+include(":app")

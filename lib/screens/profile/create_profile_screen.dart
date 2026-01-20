@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import '../broker/broker_dashboard.dart';
+import '../cofounder/cofounder_dashboard.dart';
 import '../home/main_shell.dart';
+
+// Dashboards
 
 import '../../widgets/input_field.dart';
 import '../../widgets/primary_button.dart';
+import '../investor/investor_dashboard.dart';
+import '../mentor/mentor_dashboard.dart';
+import '../startup/startup_dashboard.dart';
 
 class ProfileCreationScreen extends StatefulWidget {
   final String userRole;
@@ -22,20 +29,46 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
   int currentStep = 0;
 
   void _finishProfile() {
-    if (widget.navigateToHome) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MainShell()),
-      );
+    Widget destination;
+
+    switch (widget.userRole.toLowerCase()) {
+      case 'investor':
+        destination = const InvestorDashboard();
+        break;
+      case 'mentor':
+        destination = MentorDashboard();
+        break;
+      case 'co-founder':
+        destination = const CoFounderDashboard();
+        break;
+      case 'broker':
+        destination = const BrokerDashboard();
+        break;
+      case 'start-up':
+      case 'startup':
+      default:
+        destination = const StartupDashboard();
     }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => destination),
+      (_) => false,
+    );
   }
 
   List<Step> _buildSteps() {
-    switch (widget.userRole) {
+    switch (widget.userRole.toLowerCase()) {
       case 'investor':
         return _investorSteps();
       case 'mentor':
         return _mentorSteps();
+      case 'broker':
+        return _brokerSteps();
+      case 'co-founder':
+        return _coFounderSteps();
+      case 'startup':
+      case 'start-up':
       default:
         return _entrepreneurSteps();
     }
@@ -46,11 +79,8 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
     final steps = _buildSteps();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create Profile"),
-      ),
+      appBar: AppBar(title: const Text("Create Profile")),
       body: Stepper(
-        type: StepperType.vertical,
         currentStep: currentStep,
         steps: steps,
         onStepContinue: () {
@@ -80,120 +110,90 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
     );
   }
 
-  // ================= ENTREPRENEUR =================
+  // ================= STARTUP =================
 
-  List<Step> _entrepreneurSteps() {
-    return [
-      Step(
-        title: const Text("Business Info"),
-        isActive: currentStep >= 0,
-        content: Column(
-          children: const [
-            InputField(hint: "Business Name", icon: Icons.business),
-            SizedBox(height: 12),
-            InputField(hint: "Industry / Sector", icon: Icons.category),
-            SizedBox(height: 12),
-            InputField(hint: "Country / Region", icon: Icons.location_on),
-            SizedBox(height: 12),
-            InputField(hint: "Legal Status (Pty, LLC, etc)", icon: Icons.gavel),
-          ],
+  List<Step> _entrepreneurSteps() => [
+        Step(
+          title: const Text("Business Info"),
+          content: Column(
+            children: const [
+              InputField(hint: "Business Name", icon: Icons.business),
+              SizedBox(height: 12),
+              InputField(hint: "Industry", icon: Icons.category),
+              SizedBox(height: 12),
+              InputField(hint: "Region", icon: Icons.location_on),
+            ],
+          ),
         ),
-      ),
-      Step(
-        title: const Text("Traction"),
-        isActive: currentStep >= 1,
-        content: Column(
-          children: const [
-            InputField(
-                hint: "Stage (Idea, MVP, Revenue)", icon: Icons.timeline),
-            SizedBox(height: 12),
-            InputField(hint: "Monthly Revenue", icon: Icons.attach_money),
-            SizedBox(height: 12),
-            InputField(hint: "Number of Customers", icon: Icons.people),
-          ],
+        Step(
+          title: const Text("Funding"),
+          content: Column(
+            children: const [
+              InputField(hint: "Funding Needed", icon: Icons.money),
+              SizedBox(height: 12),
+              InputField(hint: "Pitch Deck URL", icon: Icons.link),
+            ],
+          ),
         ),
-      ),
-      Step(
-        title: const Text("Funding Needs"),
-        isActive: currentStep >= 2,
-        content: Column(
-          children: const [
-            InputField(hint: "Funding Amount Needed", icon: Icons.money),
-            SizedBox(height: 12),
-            InputField(hint: "Use of Funds", icon: Icons.description),
-            SizedBox(height: 12),
-            InputField(hint: "Pitch Deck URL", icon: Icons.link),
-          ],
-        ),
-      ),
-    ];
-  }
+      ];
 
   // ================= INVESTOR =================
 
-  List<Step> _investorSteps() {
-    return [
-      Step(
-        title: const Text("Investor Profile"),
-        isActive: currentStep >= 0,
-        content: Column(
-          children: const [
-            InputField(
-                hint: "Investor Type (Angel, VC)", icon: Icons.account_balance),
-            SizedBox(height: 12),
-            InputField(hint: "Preferred Industries", icon: Icons.category),
-            SizedBox(height: 12),
-            InputField(hint: "Preferred Region", icon: Icons.public),
-          ],
+  List<Step> _investorSteps() => [
+        Step(
+          title: const Text("Investor Profile"),
+          content: Column(
+            children: const [
+              InputField(hint: "Investor Type", icon: Icons.account_balance),
+              SizedBox(height: 12),
+              InputField(hint: "Preferred Sectors", icon: Icons.category),
+            ],
+          ),
         ),
-      ),
-      Step(
-        title: const Text("Investment Criteria"),
-        isActive: currentStep >= 1,
-        content: Column(
-          children: const [
-            InputField(hint: "Ticket Size (Min)", icon: Icons.trending_up),
-            SizedBox(height: 12),
-            InputField(hint: "Ticket Size (Max)", icon: Icons.trending_up),
-            SizedBox(height: 12),
-            InputField(hint: "Risk Appetite", icon: Icons.warning),
-          ],
-        ),
-      ),
-    ];
-  }
+      ];
 
   // ================= MENTOR =================
 
-  List<Step> _mentorSteps() {
-    return [
-      Step(
-        title: const Text("Mentor Profile"),
-        isActive: currentStep >= 0,
-        content: Column(
-          children: const [
-            InputField(hint: "Area of Expertise", icon: Icons.school),
-            SizedBox(height: 12),
-            InputField(hint: "Years of Experience", icon: Icons.history),
-            SizedBox(height: 12),
-            InputField(hint: "Industries Worked In", icon: Icons.work),
-          ],
+  List<Step> _mentorSteps() => [
+        Step(
+          title: const Text("Mentor Profile"),
+          content: Column(
+            children: const [
+              InputField(hint: "Expertise", icon: Icons.school),
+              SizedBox(height: 12),
+              InputField(hint: "Experience", icon: Icons.work),
+            ],
+          ),
         ),
-      ),
-      Step(
-        title: const Text("Availability"),
-        isActive: currentStep >= 1,
-        content: Column(
-          children: const [
-            InputField(
-                hint: "Availability (Weekly/Monthly)", icon: Icons.schedule),
-            SizedBox(height: 12),
-            InputField(hint: "Mentorship Type", icon: Icons.support),
-            SizedBox(height: 12),
-            InputField(hint: "LinkedIn / Portfolio URL", icon: Icons.link),
-          ],
+      ];
+
+  // ================= CO-FOUNDER =================
+
+  List<Step> _coFounderSteps() => [
+        Step(
+          title: const Text("Co-Founder Profile"),
+          content: Column(
+            children: const [
+              InputField(hint: "Skills", icon: Icons.build),
+              SizedBox(height: 12),
+              InputField(hint: "Equity Expectation", icon: Icons.percent),
+            ],
+          ),
         ),
-      ),
-    ];
-  }
+      ];
+
+  // ================= BROKER =================
+
+  List<Step> _brokerSteps() => [
+        Step(
+          title: const Text("Broker Profile"),
+          content: Column(
+            children: const [
+              InputField(hint: "Deal Type", icon: Icons.swap_horiz),
+              SizedBox(height: 12),
+              InputField(hint: "Commission Rate", icon: Icons.percent),
+            ],
+          ),
+        ),
+      ];
 }
